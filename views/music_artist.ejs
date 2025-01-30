@@ -1,0 +1,80 @@
+<%- include("./includes/head.ejs"); %>
+
+<link rel="stylesheet" href="/cat.css">
+
+<body>
+	<header>
+		<%- include("./includes/navbar.ejs"); %>
+	</header>
+
+	<div class="loading-spinner" id="loadingSpinner">
+	    <img src="https://i.ibb.co/PTLFqC0/cube.png" alt="Your Logo" class="logoSp">
+	    <div class="spinner"></div>
+	</div>
+
+	<section>
+		<div class="container-fluid border-0 p-0" style="margin-top: 100px;">
+			<div class="row justify-content-center">
+		        <div class="col-12 text-center">
+		          	<% if(errorMessage) { %>
+		            	<div class="alert alert-danger" role="alert"><%= errorMessage %></div>
+		          	<% } %>
+		        </div>
+
+		        <div class="col-12 col-sm-12 col-lg-3 cat_div1"></div>
+
+		        <div class="col-12 col-sm-12 col-lg-6 border cat_div2">
+		        	<h3 class="text-center">
+					    <% if (!editing) { %>Add<% } else { %>Edit<% } %> Artist
+					</h3>
+
+		        	<div>
+		        		<form action="/v1<% if(editing) { %>/viewArtist/<%= sid %><% } else { %>/addArtist<% } %>" method="POST">
+			        		<div class="mb-3">
+								<label for="inputcat" class="form-label"></label>
+								<input type="text" class="form-control" name="name" id="inputcat" aria-describedby="emailHelp" placeholder="enter name..." value="<%= oldInput.name %>">
+							</div>
+							<div class="text-center mb-3">
+								<% if (editing) { %>
+									<input type="hidden" name="id" value="<%= sid %>">
+								<% } %>
+	  							<button type="submit" class="btn btn-primary">
+	  								<% if (!editing) { %>SUBMIT<% } else { %>UPDATE<% } %>
+	  							</button>
+	  						</div>
+			        	</form>
+			        </div>
+			    </div>
+
+			    <div class="col-12 col-sm-12 col-lg-3"></div>
+
+		        <div class="col-12" style="margin-top: 50px;"></div>
+		    </div>
+		</div>
+	</section>
+
+	<footer></footer>
+
+	<script>
+		window.addEventListener('load', function () {
+	      // console.log("hii...");
+	      // Get the loading spinner element
+	      const loadingSpinner = document.getElementById('loadingSpinner');
+	        
+	      // Hide the loading spinner
+	      loadingSpinner.style.display = 'none';
+	    });
+
+	    globalThis.document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(function() {
+                const alertElement = document.querySelector('.alert-danger');
+                if (alertElement) {
+                    alertElement.style.display = 'none';
+                }
+            }, 3000); // 3000 milliseconds = 3 seconds
+        });
+	</script>
+
+<%- include("./includes/end.ejs"); %>
+
+</body>

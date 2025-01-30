@@ -1,0 +1,153 @@
+<%- include("./includes/head.ejs"); %>
+
+<link rel="stylesheet" href="/post.css">
+
+<body>
+	<header>
+		<%- include("./includes/navbar.ejs"); %>
+	</header>
+
+	<div class="loading-spinner" id="loadingSpinner">
+	    <img src="https://i.ibb.co/PTLFqC0/cube.png" alt="Your Logo" class="logoSp">
+	    <div class="spinner"></div>
+	</div>
+
+	<section>
+		<div class="container-fluid border-0 p-0" style="margin-top: 80px;">
+			<div class="row justify-content-center">
+		        <div class="col-12 text-center">
+		          	<% if(errorMessage) { %>
+		            	<div class="alert alert-danger" role="alert"><%= errorMessage %></div>
+		          	<% } %>
+		        </div>
+
+		        <% if (category != '') { %>
+			        <div class="col-12 text-center post_div1 mb-5">
+			        	<% category.forEach(i => { %>
+			        		<a href="/v1/music/<%= i.id %>" type="button" class="btn btn-outline-success"><%= i.name.toUpperCase() %></a>
+			        	<% }) %>
+			        </div>
+			      <% } %>
+
+		        <div class="col-12 col-lg-12 text-center post_div2 border-0">
+              <form action="/v1/searchMusic" method="GET" class="d-flex" role="search">
+                <input class="form-control me-2" name="name" type="search" placeholder="e.g., Zayn, Night Changes, 2025" aria-label="Search" value="<%= name %>">
+                <button class="btn btn-outline-dark" type="submit">Search</button>
+              </form>                          
+
+              <!-- <form id="filterForm" method="GET">
+		        		<select id="filterSelect" class="form-select" name="type" aria-label="Default select example">
+                  <option>Filter by Date:</option>
+                  <option value="t">Today</option>
+                  <option value="y">Yesterday</option>
+                </select>
+		        	</form> -->
+		        </div>
+
+		        <% if(showData != '') { %>
+		        	<div class="col-12 col-lg-12 mt-2 p-3">
+		        		<div class="table-responsive">
+							  	<table class="table">
+							  		<thead>
+									    <tr>
+									      <th scope="col">ID</th>
+									      <th scope="col">Title</th>
+									      <th scope="col">Audios</th>
+									      <th scope="col">Artists</th>
+									      <th scope="col">Date</th>
+									      <th scope="col">Listens</th>
+									      <th scope="col"></th>
+									    </tr>
+										</thead>
+										<tbody>
+											<% showData.forEach(i => { %>
+											    <tr>
+											      	<th scope="row"><%= i.id %></th>
+											      	<td class="title"><%= i.title %></td>
+											      	<td class="title"><%= i.audio_ids %></td>
+											      	<td class="title1"><%= i.artist %></td>
+											      	<td><%= i.date.split(' ')[0] %></td>
+											      	<td><%= i.listens || '0' %></td>
+											      	<td>
+		                            <a href="/v1/viewSingle/<%= i.id %>" type="button" class="btn btn-outline-primary">View</a>
+				                        <a href="/v1/deleteSingle/<%= i.id %>" type="button" class="btn">
+				                          <i class="fa-solid fa-trash" style="color: red;"></i>
+				                        </a>
+											      	</td>
+											    </tr>
+											<% }) %>
+										</tbody>
+							  	</table>
+								</div>
+		        	</div>
+
+		        	<div class="col-12 col-sm-12 col-lg-12">
+		        		<nav aria-label="Page navigation example">
+									<ul class="pagination justify-content-center">
+        						<li class="page-item <%= page == 1 ? 'disabled' : '' %>" id="prev-page">
+										  <a class="page-link" href="<%= page <= 1 ? '#' : '?page=' + (page - 1) + '&name=' + name %>">Previous</a>
+										</li>
+										<li class="page-item"><a class="page-link <%= page == 1 ? 'active' : '' %>" href="?page=1&name=<%= name %>">1</a></li>
+										<li class="page-item"><a class="page-link <%= page == 2 ? 'active' : '' %>" href="?page=2&name=<%= name %>">2</a></li>
+										<li class="page-item"><a class="page-link <%= page == 3 ? 'active' : '' %>" href="?page=3&name=<%= name %>">3</a></li>
+										<li class="page-item <%= page == totalCount ? 'disabled' : '' %>" id="next-page">
+										  <a class="page-link" href="<%= page == totalCount ? '#' : '?page=' + (page + 1) + '&name=' + name %>">Next</a>
+										</li>
+									</ul>
+								</nav>
+		        	</div>
+		        <% } else { %>
+		        	<div class="col-12 col-lg-12 mt-3 p-3 text-center">
+		        		<h4>No data found...</h4>
+		        	</div>
+		        <% } %>
+		    </div>
+		</div>
+	</section>
+
+	<footer></footer>
+
+	<script>
+		window.addEventListener('load', function () {
+	      // console.log("hii...");
+	      // Get the loading spinner element
+	      const loadingSpinner = document.getElementById('loadingSpinner');
+	        
+	      // Hide the loading spinner
+	      loadingSpinner.style.display = 'none';
+	  });
+
+	    globalThis.document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(function() {
+                const alertElement = document.querySelector('.alert-danger');
+                if (alertElement) {
+                    alertElement.style.display = 'none';
+                }
+            }, 3000); // 3000 milliseconds = 3 seconds
+
+            const title = document.querySelectorAll('.title');
+            const title1 = document.querySelectorAll('.title1');
+
+           	function truncateText(text) {
+			    const words = text.split(' '); // Split the text into words
+			    if (words.length > 5) {
+			        return words.slice(0, 3).join(' ') + '...'; // Join the first 50 words and add "..."
+			    }
+			    return text; // Return the original text if it's 50 words or less
+			}
+
+			title.forEach(i => {
+				// console.log(i.textContent.trim());
+				i.textContent = truncateText(i.textContent.trim());
+			})
+        
+      title1.forEach(i => {
+        // console.log(i.textContent.trim().split(' ').join(''));
+        i.textContent = truncateText(i.textContent.trim().split(' ').join('').slice(0, 15)+'...');
+      })
+    })
+	</script>
+
+<%- include("./includes/end.ejs"); %>
+
+</body>

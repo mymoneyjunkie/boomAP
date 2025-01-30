@@ -1,0 +1,138 @@
+<%- include("./includes/head.ejs"); %>
+
+<link rel="stylesheet" href="/add.css">
+
+<body>
+	<header>
+		<%- include("./includes/navbar.ejs"); %>
+	</header>
+
+	<div class="loading-spinner" id="loadingSpinner">
+	    <img src="https://i.ibb.co/PTLFqC0/cube.png" alt="Your Logo" class="logoSp">
+	    <div class="spinner"></div>
+	</div>
+
+	<section>
+		<div class="container-fluid border-0 p-0" style="margin-top: 80px;">
+			<div class="row justify-content-center">
+		        <div class="col-12 text-center">
+		          	<% if(errorMessage) { %>
+		            	<div class="alert alert-danger" role="alert"><%= errorMessage %></div>
+		          	<% } %>
+		        </div>
+
+		        <div class="col-12 col-sm-12 text-center add_div1">
+		        	<h2>Add Music</h2>
+		        </div>
+
+		        <div class="col-12 col-sm-12 mt-3 border-0 add_div2">
+		        	<form 
+		        		action="/v1<% if(editing) { %>/viewSingle/<%= sid %><% } else { %>/add_single<% } %>"
+		        		method="POST"
+		        		id="audio-form" 
+		        		onkeydown="return event.key != 'Enter';"
+		        	>
+		        		<div class="add_div3 border">
+		        			<div class="col-12 col-lg-8 p-3">
+		        				<!-- title -->
+			        			<div class="mb-3">
+								  	<label for="exampleFormControlInput1" class="form-label">Title</label>
+								  	<input type="text" class="form-control" name="title" id="exampleFormControlInput1" placeholder="e.g., title1" value="<%= oldInput.title %>">
+								</div>
+
+								<!-- social media handles -->
+								<div class="mb-3">
+								  	<label for="exampleFormControlTextarea2" class="form-label">Social Media Handles</label>
+								  	<textarea class="form-control" name="sm" id="exampleFormControlTextarea2" rows="5">
+                      					<%= oldInput.sm %>
+								  	</textarea>
+								</div>
+
+								<!-- link -->
+								<div class="mb-3">
+				                	<label for="homepage" class="form-label">Link</label>
+		                            <input 
+		                              type="url" 
+		                              id="homepage" 
+		                              class="form-control" 
+		                              name="link" 
+		                              placeholder="e.g., www.google.com"
+		                              value="<%= oldInput.link %>"
+		                            >
+				                </div>
+
+								<div class="part_one" id="part_one_template">
+								</div>
+
+								<div class="mt-2 mb-5">
+									<button type="button" class="btn btn-secondary add_more_btn">
+										Add Next Episode
+									</button>
+								</div>
+		        			</div>
+
+		        			<div class="col-12 col-lg-4 p-3"> 
+				                <!-- category -->
+				                <div class="mb-4">
+					                <% if(category != '') { %>
+					                	<label class="form-label">Categories</label>
+					                	<select class="form-select" aria-label="Default select example" name="tags">
+					                		<% category.forEach(i => { %>
+											    <option value="<%= i.id %>" <%= oldInput.tags == i.id ? 'selected' : '' %>>
+											        <%= i.name.toUpperCase() %>
+											    </option>
+											<% }); %>
+										</select>
+									<% } %>
+								</div>
+
+								<!-- artist -->
+								<div class="mb-4">
+								  	<label class="form-label">Artist</label>
+								  	<select class="form-select" aria-label="Default select example" name="artist" id="artistSelect" multiple>
+								    	<% if (oldInput && oldInput.artist) { %>
+								      		<% oldInput.artist.forEach(function(selectedArtistId) { %>
+								        		<!-- Initial placeholder options for selected artists -->
+								        		<option value="<%= selectedArtistId %>" selected></option>
+								      		<% }); %>
+								    	<% } %>
+								  </select>
+								</div>
+
+								<!-- submit btn -->
+								<div class="mb-3 text-center">
+									<% if (editing) { %>
+										<input type="hidden" name="id" value="<%= sid %>" />
+									<% } %>
+									<button type="submit" class="btn btn-primary" id="subBtn">Submit</button>
+								</div>
+			        		</div>
+		        		</div>
+		        	</form>
+		        </div>
+		    </div>
+		</div>
+    </section>
+
+    <footer></footer>
+
+    <script>
+    	let dataArray = '<%= JSON.stringify(oldInput) %>';
+		let count = <%= count %>;
+		dataArray = dataArray.replace(/[\t\r\n]+/g, ' ');
+
+		window.addEventListener('load', function () {
+	      // console.log("hii...");
+	      // Get the loading spinner element
+	      const loadingSpinner = document.getElementById('loadingSpinner');
+	        
+	      // Hide the loading spinner
+	      loadingSpinner.style.display = 'none';
+	    });
+    </script>
+
+    <script src="/script1.js"></script>
+
+    <%- include("./includes/end.ejs"); %>
+
+</body>
